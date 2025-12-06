@@ -3,12 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { isAuthenticated, getAccessToken } from "@/lib/auth";
-import ArtistWidget from "./artist_widget/page";
-import DecadeWidget from "./decade_widget/page";
-import GenreWidget from "./genre_widget/page";
-import MoodWidget from "./mood_widget/page";
-import PopularityWidget from "./popularity_widget/page";
-import TrackWidget from "./track_widget/page";
 import './dashboard.css'
 
 export default function Dashboard() {
