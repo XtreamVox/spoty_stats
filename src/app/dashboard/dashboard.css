@@ -1,0 +1,16 @@
+#main_page {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columnas */
+  grid-template-rows: repeat(2, auto);   /* 2 filas */
+  gap: 1rem; /* espacio entre elementos */
+  padding: 1rem;
+  background-color: aqua;
+}
+
+/* Opcional: estilo general para los widgets */
+#main_page > * {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  border-radius: 8px;
+  background: #9e1d1d;
+}

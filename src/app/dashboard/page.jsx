@@ -3,7 +3,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { isAuthenticated, getAccessToken } from "@/lib/auth";
-
+import ArtistWidget from "./artist_widget/page";
+import DecadeWidget from "./decade_widget/page";
+import GenreWidget from "./genre_widget/page";
+import MoodWidget from "./mood_widget/page";
+import PopularityWidget from "./popularity_widget/page";
+import TrackWidget from "./track_widget/page";
+import './dashboard.css'
 
 export default function Dashboard() {
   const router = useRouter();
@@ -47,13 +53,15 @@ export default function Dashboard() {
   // Obtener la primera imagen
   const firstImage = spotifyData?.albums?.items?.[0]?.images?.[0]?.url || null;
 
-  return (
-    <div>
-      {firstImage ? (
-        <img src={firstImage} alt="Álbum" width={300} />
-      ) : (
-        <p>No se encontró imagen</p>
-      )}
-    </div>
+  return (<> 
+  <main id = "main_page">
+    <ArtistWidget id = "artist_widget"></ArtistWidget>
+    <DecadeWidget id = "decade_widget"></DecadeWidget>
+    <GenreWidget id = "genre_widget"></GenreWidget>
+    <MoodWidget id = "mood_widget"></MoodWidget>
+    <PopularityWidget id = "popularity_widget"></PopularityWidget>
+    <TrackWidget id = "track_widget"></TrackWidget>
+  </main>
+  </>
   );
 }
