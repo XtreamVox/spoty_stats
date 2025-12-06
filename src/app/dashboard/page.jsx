@@ -55,12 +55,12 @@ export default function Dashboard() {
 
   return (<> 
   <main id = "main_page">
-    <ArtistWidget id = "artist_widget"></ArtistWidget>
-    <DecadeWidget id = "decade_widget"></DecadeWidget>
-    <GenreWidget id = "genre_widget"></GenreWidget>
-    <MoodWidget id = "mood_widget"></MoodWidget>
-    <PopularityWidget id = "popularity_widget"></PopularityWidget>
-    <TrackWidget id = "track_widget"></TrackWidget>
+    <button id = "artist_widget" onClick={() => router.push("/dashboard/artist_widget")}>ARTISTAS</button>
+    <button id = "decade_widget" onClick={() => router.push("/dashboard/decade_widget")}>ÉPOCAS DE MÚSICA</button>
+    <button id = "genre_widget" onClick={() => router.push("/dashboard/genre_widget")}>GÉNEROS</button>
+    <button id = "mood_widget" onClick={() => router.push("/dashboard/mood_widget")}>ON THE MOOD</button>
+    <button id = "popularity_widget" onClick={() => router.push("/dashboard/popularity_widget")}>TOP ÉXITOS</button>
+    <button id = "track_widget" onClick={() => router.push("/dashboard/track_widget")}>SINGLES</button>
   </main>
   </>
   );
