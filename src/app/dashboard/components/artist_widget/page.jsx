@@ -8,7 +8,7 @@ export default function ArtistWidget() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const { preferences, setPreferences, getAccessToken } = useDashboard();
+  const { preferences, setPreferences, getAccessToken, togglePreferenceItem } = useDashboard();
 
   const handleSearch = async () => {
     if (!query) return;
@@ -47,27 +47,6 @@ export default function ArtistWidget() {
     console.log("holaaaaaaaaaaaaaaa")
     console.log("Se ha pulsado: " + artist.name)
   }
-const togglePreferencies = (artist) => {
-  // Comprobar si el artista ya está en preferences
-  const alreadySelected = preferences.artist?.some((a) => a.id === artist.id);
-
-  let newSelected;
-
-  if (alreadySelected) {
-    // Si ya está, lo eliminamos
-    newSelected = preferences.artist.filter((a) => a.id !== artist.id);
-  } else {
-    // Si no está, lo añadimos
-    newSelected = [...(preferences.artist || []), artist];
-  }
-
-  // Actualizar preferences en el contexto
-  setPreferences((prev) => ({
-    ...prev,
-    artist: newSelected,
-  }));
-  console.log(preferences.artist)
-};
 
   return (
     <div>
@@ -87,7 +66,7 @@ const togglePreferencies = (artist) => {
             <button onClick={() => handleArtistClick(artist)}>
               {artist.name}
             </button>
-            <button onClick={() => togglePreferencies(artist)}>
+            <button onClick={() => togglePreferenceItem("artist", artist)}>
                 Preferencias
             </button>
           </li>

@@ -20,12 +20,30 @@ export default function DashboardProvider({ children }) {
     popularity: null,
     track: null,
   });
+  const togglePreferenceItem = (key, item) => {
+  setPreferences((prev) => {
+    const list = prev[key] || [];
+
+    const exists = list.some((el) => el.id === item.id);
+
+    const newList = exists
+      ? list.filter((el) => el.id !== item.id)
+      : [...list, item];
+
+    return {
+      ...prev,
+      [key]: newList,
+    };
+  });
+};
+
 
   // Valor que se comparte con todos los componentes hijos
   const value = {
     preferences,
     setPreferences,
     getAccessToken, // función para obtener token de Spotify
+    togglePreferenceItem
   };
 
   return (
