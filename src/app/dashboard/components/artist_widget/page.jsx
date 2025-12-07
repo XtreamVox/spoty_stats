@@ -8,7 +8,7 @@ export default function ArtistWidget() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const { preferences, setPreferences, getAccessToken, togglePreferenceItem } = useDashboard();
+  const {getAccessToken, togglePreferenceItem } = useDashboard();
 
   const handleSearch = async () => {
     if (!query) return;

@@ -40,8 +40,6 @@ export default function DashboardProvider({ children }) {
 
   // Valor que se comparte con todos los componentes hijos
   const value = {
-    preferences,
-    setPreferences,
     getAccessToken, // función para obtener token de Spotify
     togglePreferenceItem
   };
