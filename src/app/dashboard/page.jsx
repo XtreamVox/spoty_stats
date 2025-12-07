@@ -44,17 +44,14 @@ export default function Dashboard() {
     return <div>Cargando...</div>;
   }
 
-  // Obtener la primera imagen
-  const firstImage = spotifyData?.albums?.items?.[0]?.images?.[0]?.url || null;
-
   return (<> 
   <main id = "main_page">
-    <button id = "artist_widget" onClick={() => router.push("/dashboard/artist_widget")}>ARTISTAS</button>
-    <button id = "decade_widget" onClick={() => router.push("/dashboard/decade_widget")}>ÉPOCAS DE MÚSICA</button>
-    <button id = "genre_widget" onClick={() => router.push("/dashboard/genre_widget")}>GÉNEROS</button>
-    <button id = "mood_widget" onClick={() => router.push("/dashboard/mood_widget")}>ON THE MOOD</button>
-    <button id = "popularity_widget" onClick={() => router.push("/dashboard/popularity_widget")}>TOP ÉXITOS</button>
-    <button id = "track_widget" onClick={() => router.push("/dashboard/track_widget")}>SINGLES</button>
+    <button id = "artist_widget" onClick={() => router.push("/dashboard/components/artist_widget")}>ARTISTAS</button>
+    <button id = "decade_widget" onClick={() => router.push("/dashboard/components/decade_widget")}>ÉPOCAS DE MÚSICA</button>
+    <button id = "genre_widget" onClick={() => router.push("/dashboard/components/genre_widget")}>GÉNEROS</button>
+    <button id = "mood_widget" onClick={() => router.push("/dashboard/components/mood_widget")}>ON THE MOOD</button>
+    <button id = "popularity_widget" onClick={() => router.push("/dashboard/components/popularity_widget")}>TOP ÉXITOS</button>
+    <button id = "track_widget" onClick={() => router.push("/dashboard/components/track_widget")}>SINGLES</button>
   </main>
   </>
   );
