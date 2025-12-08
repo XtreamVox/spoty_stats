@@ -1,10 +1,5 @@
-"use client";
-
-import { getAccessToken } from "@/lib/auth";
-import { useEffect, useState } from "react";
-
-export default function GenreWidget() {
-  const [genres, setGenres] = useState([]);
+export default function Genres() {
+  const [genres, setGenres] = useState(GENRES);
 
   useEffect(() => {
     const fetchGenres = async () => {
@@ -18,5 +13,5 @@ export default function GenreWidget() {
     };
     fetchGenres();
   }, []);
-  return console.log("Los generos son: ", genres);
+  return console.log(genres);
 }
