@@ -1,17 +1,9 @@
-export default function Genres() {
-  const [genres, setGenres] = useState(GENRES);
 
-  useEffect(() => {
-    const fetchGenres = async () => {
-      const token = getAccessToken("spotify_token");
-      const res = await fetch(
-        "https://api.spotify.com/v1/recommendations/available-genre-seeds",
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      const data = await res.json();
-      setGenres(data.genres.map((g) => ({ id: g, label: g })));
-    };
-    fetchGenres();
-  }, []);
-  return console.log(genres);
-}
+export const GENRES = [
+  { id: "pop", label: "Pop" },
+  { id: "rock", label: "Rock" },
+  { id: "hip-hop", label: "Hip-Hop" },
+  { id: "electronic", label: "Electronic" },
+  { id: "jazz", label: "Jazz" },
+  { id: "classical", label: "Classical" },
+];
