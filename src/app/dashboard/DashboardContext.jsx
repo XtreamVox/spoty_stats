@@ -35,6 +35,7 @@ export default function DashboardProvider({ children }) {
       [key]: newList,
     };
   });
+  console.log("Preferencias actualizadas:", preferences);
 };
 
 
