@@ -11,7 +11,8 @@ export default function GenreWidget() {
   const [tracks, setTracks] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const { getAccessToken, togglePreferenceItem } = useDashboard();
+  const { getAccessToken, togglePreferenceItem, refreshAccessToken } =
+    useDashboard();
 
   const handleClick = (genre) => {
     console.log("Se ha pulsado el género:", genre);
@@ -27,16 +28,12 @@ export default function GenreWidget() {
   // Fetch on-demand de tracks por género
   useEffect(() => {
     if (!openGenre) return;
-
     const fetchTracks = async () => {
       setLoading(true);
-      const token = getAccessToken("spotify_token");
+      let token = getAccessToken("spotify_token");
       if (!token) {
-        console.error("No hay token disponible");
-        setLoading(false);
-        return;
+        token = refreshAccessToken();
       }
-
       try {
         const response = await fetch(
           `https://api.spotify.com/v1/search?q=genre:${openGenre.id}&type=track&limit=10`,

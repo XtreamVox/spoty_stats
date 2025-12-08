@@ -61,6 +61,34 @@ export function getAccessToken() {
   return token;
 }
 
+export async function refreshAccessToken() {
+  const refreshToken = localStorage.getItem('spotify_refresh_token');
+  if (!refreshToken) return null;
+
+  try {
+    const response = await fetch('/api/refresh-token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token: refreshToken })
+    });
+
+    if (!response.ok) {
+      console.error("Error refreshing token", await response.text());
+      return null;
+    }
+
+    const data = await response.json();
+
+    // Guardar nuevo token
+    saveTokens(data.access_token, refreshToken, data.expires_in);
+
+    return data.access_token;
+  } catch (e) {
+    console.error("Refresh failed:", e);
+    return null;
+  }
+}
+
 // Verificar si hay token válido
 export function isAuthenticated() {
   return getAccessToken() !== null;

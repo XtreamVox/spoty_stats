@@ -11,7 +11,8 @@ export default function DecadeWidget() {
   const [tracks, setTracks] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const { getAccessToken, togglePreferenceItem } = useDashboard();
+  const { getAccessToken, togglePreferenceItem, refreshAccessToken } =
+    useDashboard();
 
   const handleClick = (decade) => {
     console.log("Se ha pulsado la década:", decade);
@@ -27,12 +28,12 @@ export default function DecadeWidget() {
 
   useEffect(() => {
     if (!openDecade) return;
+
     const fetchDecadeTracks = async () => {
-      const token = getAccessToken("spotify_token");
+      refreshAccessToken();
+      let token = getAccessToken("spotify_token");
       if (!token) {
-        console.error("No hay token de Spotify disponible");
-        setLoading(false);
-        return;
+        token = refreshAccessToken();
       }
 
       const startYear = parseInt(openDecade.id.substring(0, 4)); // para quitar la 's'

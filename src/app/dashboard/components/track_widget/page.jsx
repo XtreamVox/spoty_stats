@@ -8,20 +8,17 @@ export default function TrackWidget() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const { getAccessToken, togglePreferenceItem } = useDashboard();
+  const { getAccessToken, togglePreferenceItem, refreshAccessToken } = useDashboard();
 
   const handleSearch = async () => {
     if (!query) return;
 
     setLoading(true);
 
-    const token = getAccessToken("spotify_token");
+    let token = getAccessToken("spotify_token");
     if (!token) {
-      console.error("No hay token de Spotify disponible");
-      setLoading(false);
-      return;
+      token = refreshAccessToken();
     }
-
     const response = await fetch(
       `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track`,
       {

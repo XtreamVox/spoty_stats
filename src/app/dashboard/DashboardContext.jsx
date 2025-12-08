@@ -2,6 +2,8 @@
 
 import { createContext, useContext, useState } from "react";
 import { getAccessToken } from "@/lib/auth";
+import { refreshAccessToken } from "@/lib/auth";
+
 
 // 1. Crear el contexto
 const DashboardContext = createContext();
@@ -42,7 +44,8 @@ export default function DashboardProvider({ children }) {
   // Valor que se comparte con todos los componentes hijos
   const value = {
     getAccessToken, // función para obtener token de Spotify
-    togglePreferenceItem
+    togglePreferenceItem,
+    refreshAccessToken
   };
 
   return (

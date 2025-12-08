@@ -4,7 +4,7 @@ import { useDashboard } from "../../DashboardContext";
 import { useEffect, useState } from "react";
 
 export default function PopularityDialog({ open, onClose, range }) {
-  const { getAccessToken } = useDashboard();
+  const { getAccessToken, refreshAccessToken } = useDashboard();
   const [tracks, setTracks] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -16,12 +16,10 @@ export default function PopularityDialog({ open, onClose, range }) {
     const fetchTracks = async () => {
       setLoading(true);
 
-      const token = getAccessToken("spotify_token");
-      if (!token) {
-        console.error("No hay token de Spotify disponible");
-        setLoading(false);
-        return;
-      }
+    let token = getAccessToken("spotify_token");
+    if (!token) {
+      token = refreshAccessToken();
+    }
 
       // Necesita un parámetro "q" obligatorio
       const url = `https://api.spotify.com/v1/search?q=a&type=track&limit=50`;
@@ -46,7 +44,6 @@ export default function PopularityDialog({ open, onClose, range }) {
         const data = await response.json();
         const allTracks = data.tracks?.items || [];
 
-        // 🔥 Filtrar por popularidad
         const filteredTracks = allTracks.filter(
           (t) => t.popularity >= range.min && t.popularity <= range.max
         );
