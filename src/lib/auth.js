@@ -47,15 +47,16 @@ export function saveTokens(accessToken, refreshToken, expiresIn) {
 }
 
 // Obtener token actual (con verificación de expiración)
-export function getAccessToken() {
+export async function getAccessToken() {
   const token = localStorage.getItem('spotify_token');
   const expiration = localStorage.getItem('spotify_token_expiration');
   
   if (!token || !expiration) return null;
   
-  // Si el token expiró, retornar null
+  // Si el token expiró, volver a pedir token
   if (Date.now() > parseInt(expiration)) {
-    return null;
+    const newToken = await refreshAccessToken();
+    return newToken;
   }
   
   return token;
@@ -90,8 +91,8 @@ export async function refreshAccessToken() {
 }
 
 // Verificar si hay token válido
-export function isAuthenticated() {
-  return getAccessToken() !== null;
+export async function isAuthenticated() {
+  return (await getAccessToken()) !== null;
 }
 
 // Cerrar sesión

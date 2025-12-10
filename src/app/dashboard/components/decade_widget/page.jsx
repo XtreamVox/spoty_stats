@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { DECADES } from "./decades";
 import DecadeDialog from "./decade_dialogue";
-import "./decade_widget.css";
 import { useDashboard } from "../../DashboardContext";
 
 export default function DecadeWidget() {
@@ -11,13 +10,10 @@ export default function DecadeWidget() {
   const [tracks, setTracks] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const { getAccessToken, togglePreferenceItem, refreshAccessToken } =
-    useDashboard();
+  const { getAccessToken, togglePreferenceItem, preferences } = useDashboard();
 
   const handleClick = (decade) => {
-    console.log("Se ha pulsado la década:", decade);
-    setOpenDecade(decade); // Guardamos el objeto completo
-    console.log("openDecade es ahora:", decade);
+    setOpenDecade(decade);
   };
 
   const handleClose = () => {
@@ -30,31 +26,29 @@ export default function DecadeWidget() {
     if (!openDecade) return;
 
     const fetchDecadeTracks = async () => {
-      refreshAccessToken();
-      let token = getAccessToken("spotify_token");
-      if (!token) {
-        token = refreshAccessToken();
-      }
+      let token = await getAccessToken("spotify_token");
 
-      const startYear = parseInt(openDecade.id.substring(0, 4)); // para quitar la 's'
+      const startYear = parseInt(openDecade.id.substring(0, 4));
       const endYear = startYear + 9;
+
+      setLoading(true);
       try {
         const response = await fetch(
-          `https://api.spotify.com/v1/search?q=year:${startYear}-${endYear}&type=track&limit=10`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+          `https://api.spotify.com/v1/search?q=year:${startYear}-${endYear}&type=track&limit=12`,
+          { headers: { Authorization: `Bearer ${token}` } }
         );
 
         if (!response.ok) {
           console.error("Error buscando tracks:", response.status);
-          setLoading(false);
+          setTracks([]);
           return;
         }
+
         const data = await response.json();
         setTracks(data.tracks.items || []);
       } catch (err) {
         console.error("Error en fetch:", err);
+        setTracks([]);
       } finally {
         setLoading(false);
       }
@@ -62,39 +56,46 @@ export default function DecadeWidget() {
 
     fetchDecadeTracks();
   }, [openDecade, getAccessToken]);
-  return (
-    <div className="grid grid-cols-3 grid-rows-2 gap-4 h-[60vh] p-4">
-      {/*Crear los bloques */}
-      {DECADES.map((decade) => (
+
+return (
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
+    {DECADES.map((decade) => {
+      const selected = preferences.decade.some(d => d.id === decade.id);
+
+      return (
         <div
           key={decade.id}
-          className="bg-neutral-800 text-white flex items-center justify-center text-2xl rounded-lg cursor-pointer hover:bg-neutral-700 transition"
+          className={`relative bg-neutral-800 text-white flex flex-col items-center justify-center rounded-lg cursor-pointer transition transform hover:scale-105 hover:bg-neutral-700 ${
+            selected
+              ? "ring-2 ring-green-400 border-green-500 border"
+              : "border-transparent"
+          } min-h-[150px]`}
           onClick={() => handleClick(decade)}
         >
-          <div className="flex flex-col items-center justify-center">
-            <span className="text-2xl font-semibold">{decade.label}</span>
-            <button
-              className="mt-2 px-3 py-1 bg-neutral-700 hover:bg-neutral-600 rounded-lg text-sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                togglePreferenceItem("decade", decade); // guardo el objeto completo, habrá que tratar la información después
-              }}
-            >
-              addToPreferences
-            </button>
-          </div>
+          <span className="text-2xl font-semibold">{decade.label}</span>
+          <button
+            className="mt-2 px-3 py-1 bg-neutral-700 hover:bg-neutral-600 rounded-lg text-sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              togglePreferenceItem("decade", decade);
+            }}
+          >
+            {selected ? "Quitar de preferencias" : "Añadir a preferencias"}
+          </button>
         </div>
-      ))}
+      );
+    })}
 
-      {/*Creación de dialogos*/}
-      {openDecade && (
-        <DecadeDialog
-          open={!!openDecade}
-          onClose={handleClose}
-          decade={openDecade}
-          tracks={loading ? [] : tracks}
-        />
-      )}
-    </div>
-  );
+    {/* Diálogo */}
+    {openDecade && (
+      <DecadeDialog
+        open={!!openDecade}
+        onClose={handleClose}
+        decade={openDecade}
+        tracks={loading ? [] : tracks}
+      />
+    )}
+  </div>
+);
+
 }

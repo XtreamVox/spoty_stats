@@ -2,57 +2,14 @@
 
 import Image from "next/image";
 import { useDashboard } from "../../DashboardContext";
-import { useEffect, useState } from "react";
 
-export default function PopularityDialog({ open, onClose, range }) {
-  const { getAccessToken, togglePreferenceItem, preferences, toggleFavorite, favorites } = useDashboard();
-  const [tracks, setTracks] = useState([]);
-  const [loading, setLoading] = useState(false);
+export default function GenreDialog({ open, onClose, genre, tracks }) {
+  const { togglePreferenceItem, preferences, toggleFavorite, favorites } = useDashboard();
 
-  useEffect(() => {
-    if (!open || !range || !getAccessToken) return;
-
-    const fetchTracks = async () => {
-      setLoading(true);
-
-      let token = await getAccessToken("spotify_token");
-
-      const url = `https://api.spotify.com/v1/search?q=a&type=track&limit=50`;
-
-      try {
-        const response = await fetch(url, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!response.ok) {
-          console.error("Error de Spotify:", response.status, response.statusText);
-          setTracks([]);
-          setLoading(false);
-          return;
-        }
-
-        const data = await response.json();
-        const allTracks = data.tracks?.items || [];
-        const filteredTracks = allTracks.filter(
-          (t) => t.popularity >= range.min && t.popularity <= range.max
-        ).slice(0, 12);
-
-        setTracks(filteredTracks);
-      } catch (err) {
-        console.error("Error en fetch:", err);
-        setTracks([]);
-      }
-
-      setLoading(false);
-    };
-
-    fetchTracks();
-  }, [open, range, getAccessToken]);
+  if (!open) return null;
 
   const isTrackSelected = (track) =>
     preferences.track?.some((t) => t.id === track.id);
-
-  if (!open) return null;
 
   return (
     <div
@@ -63,16 +20,10 @@ export default function PopularityDialog({ open, onClose, range }) {
         className="bg-neutral-900 text-white rounded-xl shadow-xl p-6 w-[90vw] max-w-4xl max-h-[80vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-3xl font-bold mb-6 text-center">
-          Canciones — {range.label}
-        </h2>
+        <h2 className="text-3xl font-bold mb-6 text-center">{genre.label}</h2>
 
-        {loading ? (
-          <p className="text-center text-neutral-400">Cargando canciones...</p>
-        ) : tracks.length === 0 ? (
-          <p className="text-center text-neutral-400">
-            No se encontraron canciones para este rango.
-          </p>
+        {tracks.length === 0 ? (
+          <p className="text-neutral-400 text-center mb-4">Cargando tracks...</p>
         ) : (
           <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {tracks.map((track) => (

@@ -1,16 +1,84 @@
+/* ===========================
+   LAYOUT GENERAL – BENTO SYMMETRIC GRID
+   =========================== */
+
 #main_page {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 columnas */
-  grid-template-rows: repeat(2, auto);   /* 2 filas */
-  gap: 1rem; /* espacio entre elementos */
-  padding: 1rem;
-  background-color: aqua;
+  gap: 1.2rem;
+
+  /* Desktop: 3 columnas simétricas */
+  grid-template-columns: repeat(3, 1fr);
+
+  padding: 2rem;
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  background: transparent;
 }
 
-/* Opcional: estilo general para los widgets */
-#main_page > * {
-  border: 1px solid #ccc;
-  padding: 1rem;
-  border-radius: 8px;
-  background: #9e1d1d;
+/* ===========================
+   ESTILO BASE PARA BOXES
+   =========================== */
+
+#main_page > button {
+  background: #121212;
+  color: #fff;
+  padding: 2rem 1.5rem;
+  min-height: 80px; /* altura mínima para mantener consistencia */
+
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+  white-space: normal; /* Permite que el texto haga wrap */
+  word-break: break-word; /* Evita desbordamiento de palabras largas */
+
+  transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* Hover */
+#main_page > button:hover {
+  transform: translateY(-4px);
+  background: #1a1a1a;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+/* Active */
+#main_page > button:active {
+  transform: translateY(-1px);
+}
+
+/* ===========================
+   RESPONSIVE DESIGN SYMMETRICAL
+   =========================== */
+
+/* Tablets: 2 columnas simétricas */
+@media (max-width: 900px) {
+  #main_page {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Móviles: 1 columna simétrica */
+@media (max-width: 600px) {
+  #main_page {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+
+  #main_page > button {
+    padding: 1.5rem 1.2rem;
+    font-size: 1.1rem;
+    min-height: 70px;
+  }
 }

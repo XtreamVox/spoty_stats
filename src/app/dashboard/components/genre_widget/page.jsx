@@ -1,50 +1,44 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { GENRES } from "./genres"; // archivo con lista de géneros { id, label }
-import GenreDialog from "./genre_dialogue";
+import { GENRES } from "./genres";
+import GenreDialog from "./genre_dialog";
 import { useDashboard } from "../../DashboardContext";
-import "./genre_widget.css";
 
 export default function GenreWidget() {
   const [openGenre, setOpenGenre] = useState(null);
   const [tracks, setTracks] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const { getAccessToken, togglePreferenceItem, refreshAccessToken } =
-    useDashboard();
+  const { getAccessToken, togglePreferenceItem, preferences } = useDashboard();
 
-  const handleClick = (genre) => {
-    console.log("Se ha pulsado el género:", genre);
-    setOpenGenre(genre);
-  };
-
+  const handleClick = (genre) => setOpenGenre(genre);
   const handleClose = () => {
     setOpenGenre(null);
     setTracks([]);
     setLoading(false);
   };
 
-  // Fetch on-demand de tracks por género
+  const isSelected = (genre) =>
+    Array.isArray(preferences.genre) &&
+    preferences.genre.some((g) => g.id === genre.id);
+
   useEffect(() => {
     if (!openGenre) return;
+
     const fetchTracks = async () => {
       setLoading(true);
-      let token = getAccessToken("spotify_token");
-      if (!token) {
-        token = refreshAccessToken();
-      }
+      let token = await getAccessToken("spotify_token");
+
       try {
         const response = await fetch(
-          `https://api.spotify.com/v1/search?q=genre:${openGenre.id}&type=track&limit=10`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+          `https://api.spotify.com/v1/search?q=genre:${openGenre.id}&type=track&limit=12`,
+          { headers: { Authorization: `Bearer ${token}` } }
         );
 
         if (!response.ok) {
           console.error("Error buscando tracks:", response.status);
-          setLoading(false);
+          setTracks([]);
           return;
         }
 
@@ -52,6 +46,7 @@ export default function GenreWidget() {
         setTracks(data.tracks.items || []);
       } catch (err) {
         console.error("Error en fetch:", err);
+        setTracks([]);
       } finally {
         setLoading(false);
       }
@@ -61,11 +56,15 @@ export default function GenreWidget() {
   }, [openGenre, getAccessToken]);
 
   return (
-    <div className="grid grid-cols-3 grid-rows-2 gap-4 h-[60vh] p-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
       {GENRES.map((genre) => (
         <div
           key={genre.id}
-          className="bg-neutral-800 text-white flex flex-col items-center justify-center text-xl rounded-lg cursor-pointer hover:bg-neutral-700 transition p-2"
+          className={`relative bg-neutral-800 text-white flex flex-col items-center justify-center rounded-lg cursor-pointer transition transform hover:scale-105 hover:bg-neutral-700 p-2 ${
+            isSelected(genre)
+              ? "border-2 border-green-500 ring-2 ring-green-400"
+              : "border-transparent"
+          } min-h-[120px]`}
           onClick={() => handleClick(genre)}
         >
           <span className="font-semibold text-center">{genre.label}</span>
@@ -76,7 +75,7 @@ export default function GenreWidget() {
               togglePreferenceItem("genre", genre);
             }}
           >
-            addToPreferences
+            {isSelected(genre) ? "Seleccionado" : "Añadir a preferencias"}
           </button>
         </div>
       ))}

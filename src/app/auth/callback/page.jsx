@@ -9,6 +9,7 @@ export default function CallbackPage() {
   const searchParams = useSearchParams();
   const [error, setError] = useState(null);
   const hasProcessed = useRef(false);
+  
 
   useEffect(() => {
     // Prevenir ejecución duplicada

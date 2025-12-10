@@ -1,51 +1,79 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { getAccessToken } from "@/lib/auth";
 import { refreshAccessToken } from "@/lib/auth";
 
-
-// 1. Crear el contexto
 const DashboardContext = createContext();
-
-// 2. Hook para usar el contexto en cualquier componente
 export const useDashboard = () => useContext(DashboardContext);
 
-// 3. Provider: envuelve todas las páginas del dashboard
 export default function DashboardProvider({ children }) {
-  // Estado de preferencias compartidas
-  const [preferences, setPreferences] = useState({
-    artist: null,
-    genre: null,
-    mood: null,
-    decade: null,
+  // Valores iniciales de preferences
+  const initialPreferences = {
+    artist: [],
+    genre: [],
+    track: [],
+    decade: [],
     popularity: null,
-    track: null,
-  });
-  const togglePreferenceItem = (key, item) => {
-  setPreferences((prev) => {
-    const list = prev[key] || [];
+    mood: null,
+  };
 
-    const exists = list.some((el) => el.id === item.id);
+  const [preferences, setPreferences] = useState(initialPreferences);
 
-    const newList = exists
-      ? list.filter((el) => el.id !== item.id)
-      : [...list, item];
+  // Variable para favoritos
+  const [favorites, setFavorites] = useState([]);
 
-    return {
-      ...prev,
-      [key]: newList,
-    };
-  });
-  console.log("Preferencias actualizadas:", preferences);
-};
+  // Cargar preferences y favoritos desde localStorage al montar
+  useEffect(() => {
+    const storedPreferences = localStorage.getItem("preferences");
+    if (storedPreferences) setPreferences(JSON.parse(storedPreferences));
 
+    const storedFavorites = localStorage.getItem("favorites");
+    if (storedFavorites) setFavorites(JSON.parse(storedFavorites));
+  }, []);
 
-  // Valor que se comparte con todos los componentes hijos
+  // Sincronizar favorites con localStorage siempre que cambie
+  useEffect(() => {
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+  }, [favorites]);
+
+  const toggleFavorite = (item) => {
+    setFavorites(prev => {
+      const exists = prev.some(el => el.id === item.id);
+      return exists ? prev.filter(el => el.id !== item.id) : [...prev, item];
+    });
+  };
+
+  const togglePreferenceItem = (key, item, list = true) => {
+    setPreferences(prev => {
+      let updated;
+      if (!list) {
+        updated = { ...prev, [key]: prev[key]?.id === item.id ? null : item };
+      } else {
+        const listData = prev[key] || [];
+        const exists = listData.some(el => el.id === item.id);
+        const newList = exists ? listData.filter(el => el.id !== item.id) : [...listData, item];
+        updated = { ...prev, [key]: newList };
+      }
+
+      localStorage.setItem("preferences", JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const resetPreferences = () => {
+    setPreferences(initialPreferences);
+    localStorage.setItem("preferences", JSON.stringify(initialPreferences));
+  };
+
   const value = {
-    getAccessToken, // función para obtener token de Spotify
+    getAccessToken,
     togglePreferenceItem,
-    refreshAccessToken
+    refreshAccessToken,
+    preferences,
+    resetPreferences,
+    favorites,
+    toggleFavorite,
   };
 
   return (
